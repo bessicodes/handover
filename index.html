@@ -566,6 +566,30 @@
   .phone.fullscreen .statusbar span{display:none;}
   body.fs-lock{overflow:hidden;}
 
+  /* Pickup scheduling — buyer chooses ASAP or a specific window with the assigned transit company */
+  .schedule-card{display:flex; flex-direction:column; gap:12px;}
+  .schedule-head{display:flex; align-items:baseline; justify-content:space-between; font-size:0.78rem;}
+  .schedule-head .k{color:var(--ink-faint); font-weight:600; text-transform:uppercase; letter-spacing:.06em; font-size:0.68rem;}
+  .schedule-network{color:var(--ink-soft); font-weight:600;}
+  .schedule-network span{color:var(--steel-ink);}
+
+  .pickup-toggle{display:flex; gap:6px; background:var(--surface-2); border:1px solid var(--border-hair); border-radius:11px; padding:3px;}
+  .pickup-opt{
+    flex:1; appearance:none; border:none; cursor:pointer; padding:8px 10px; border-radius:8px;
+    font-size:0.78rem; font-weight:700; color:var(--ink-faint); background:transparent;
+    transition:background .18s ease, color .18s ease;
+  }
+  .pickup-opt.active{background:var(--glass-strong); color:var(--gold-ink);}
+
+  .pickup-time-row{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+  .pickup-time-row .k{font-size:0.78rem; color:var(--ink-soft); font-weight:500;}
+  .time-field{
+    appearance:none; background:var(--surface-2); border:1px solid var(--border-hair); color:var(--ink);
+    font-family:var(--font-mono); font-size:0.85rem; font-weight:700; padding:8px 10px; border-radius:9px;
+    color-scheme:dark;
+  }
+  .time-field:focus-visible{outline:2px solid var(--gold); outline-offset:1px;}
+
   .hidden{display:none !important;}
 </style>
 
@@ -821,6 +845,22 @@
               <div class="job-detail-row"><span class="k">Item value</span><span class="v" id="orderItemValue">R 2,450.00</span></div>
               <div class="job-detail-row"><span class="k">Courier payout</span><span class="v payout" id="orderPayout">R 120.00</span></div>
               <div class="job-detail-row"><span class="k">Waybill</span><span class="v" id="orderWaybill">HX-4829</span></div>
+              <div class="job-detail-row buyer-only"><span class="k">Pickup window</span><span class="v" id="orderPickupWindow">ASAP · next available</span></div>
+            </div>
+
+            <div class="glass schedule-card buyer-only">
+              <div class="schedule-head">
+                <span class="k">Schedule pickup</span>
+                <span class="schedule-network">via <span id="scheduleNetwork">The Courier Guy</span></span>
+              </div>
+              <div class="pickup-toggle" id="pickupToggle">
+                <button class="pickup-opt active" data-pickup="asap" type="button">ASAP</button>
+                <button class="pickup-opt" data-pickup="schedule" type="button">Choose a time</button>
+              </div>
+              <div class="pickup-time-row hidden" id="pickupTimeRow">
+                <label class="k" for="pickupTimeInput">Pickup time</label>
+                <input class="time-field" type="time" id="pickupTimeInput" value="14:00">
+              </div>
             </div>
 
             <div class="broadcast-hub">
@@ -857,6 +897,7 @@
               </div>
               <div class="job-detail-row"><span class="k">Pickup</span><span class="v" id="offerPickup">Thabo M., Sandton</span></div>
               <div class="job-detail-row"><span class="k">Dropoff</span><span class="v" id="offerDropoff">Lindiwe K., Rosebank</span></div>
+              <div class="job-detail-row"><span class="k">Requested pickup</span><span class="v" id="offerPickupWindow">ASAP · next available</span></div>
               <div class="job-detail-row"><span class="k">Payout</span><span class="v payout" id="offerPayout">R 120.00</span></div>
             </div>
             <div class="offer-actions">
@@ -1132,6 +1173,8 @@
     setText('orderPayout', money(s.transit));
     setText('orderWaybill', s.ref);
     setText('broadcastNetwork', s.network);
+    setText('scheduleNetwork', s.network);
+    resetPickupSchedule();
 
     // Dispatch — job offer
     setText('offerNetwork', s.network);
@@ -1290,22 +1333,73 @@
     clearInterval(countdownTimer);
   }
 
+  // ---- Pickup scheduling: ASAP or a specific window, with the assigned transit company ----
+  let pickupMode = 'asap';
+  let pickupTime = '14:00';
+
+  function formatPickupTime(t){
+    const parts = t.split(':');
+    const h = Number(parts[0]);
+    const m = parts[1];
+    const period = h >= 12 ? 'PM' : 'AM';
+    let hh = h % 12; if(hh === 0) hh = 12;
+    return hh + ':' + m + ' ' + period;
+  }
+  function pickupWindowText(){
+    return pickupMode === 'asap' ? 'ASAP · next available' : 'Today · ' + formatPickupTime(pickupTime);
+  }
+  function updatePickupDisplay(){
+    setText('orderPickupWindow', pickupWindowText());
+    setText('offerPickupWindow', pickupWindowText());
+  }
+  function resetPickupSchedule(){
+    pickupMode = 'asap';
+    pickupTime = '14:00';
+    document.getElementById('pickupTimeInput').value = pickupTime;
+    document.querySelectorAll('.pickup-opt').forEach(b => b.classList.toggle('active', b.dataset.pickup === 'asap'));
+    document.getElementById('pickupTimeRow').classList.add('hidden');
+    updatePickupDisplay();
+  }
+  document.querySelectorAll('.pickup-opt').forEach(btn=>{
+    btn.addEventListener('click', () => {
+      pickupMode = btn.dataset.pickup;
+      document.querySelectorAll('.pickup-opt').forEach(b => b.classList.toggle('active', b === btn));
+      document.getElementById('pickupTimeRow').classList.toggle('hidden', pickupMode !== 'schedule');
+      updatePickupDisplay();
+    });
+  });
+  document.getElementById('pickupTimeInput').addEventListener('change', (e) => {
+    pickupTime = e.target.value || pickupTime;
+    updatePickupDisplay();
+  });
+
+  function pickupLogPhrase(){
+    return pickupMode === 'asap' ? 'ASAP pickup requested' : 'pickup requested for ' + formatPickupTime(pickupTime);
+  }
+  function acceptedEtaText(){
+    return pickupMode === 'asap'
+      ? 'ETA to pickup · ' + currentScenario.etaPickup
+      : 'Pickup confirmed for ' + formatPickupTime(pickupTime);
+  }
+
   document.getElementById('simulateResponseBtn').addEventListener('click', () => {
-    logEvent('09:12', 'Broadcasting to ' + currentScenario.network + ' and nearby couriers', 'var(--amber)');
+    logEvent('09:12', 'Broadcasting to ' + currentScenario.network + ' · ' + pickupLogPhrase(), 'var(--amber)');
     if(appView === 'courier'){
       showDispatchView(acceptView);
       startCountdown();
     } else {
       // Buyers don't see the accept/decline mechanics — they just see the match land.
       showDispatchView(acceptedView);
-      logEvent('09:13', currentScenario.courier + ' matched · ETA to pickup ' + currentScenario.etaPickup, 'var(--steel)');
+      setText('acceptedEta', acceptedEtaText());
+      logEvent('09:13', currentScenario.courier + ' matched · ' + acceptedEtaText(), 'var(--steel)');
     }
   });
 
   document.getElementById('acceptBtn').addEventListener('click', () => {
     stopCountdown();
     showDispatchView(acceptedView);
-    logEvent('09:13', currentScenario.courier + ' accepted the job · ETA to pickup ' + currentScenario.etaPickup, 'var(--steel)');
+    setText('acceptedEta', acceptedEtaText());
+    logEvent('09:13', currentScenario.courier + ' accepted the job · ' + acceptedEtaText(), 'var(--steel)');
   });
 
   document.getElementById('declineBtn').addEventListener('click', () => {
