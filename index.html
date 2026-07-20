@@ -509,6 +509,38 @@
   .new-order-btn svg{transition:transform .3s ease;}
   .new-order-btn.spin svg{transform:rotate(-180deg);}
 
+  /* Buyer / Courier view switch — two different people, two different apps,
+     one shared transaction. */
+  .view-switch{display:flex; gap:4px; background:var(--glass); border:1px solid var(--border-hair); border-radius:12px; padding:3px; margin:0 22px 12px;}
+  .view-btn{
+    flex:1; appearance:none; border:none; cursor:pointer; padding:8px 10px; border-radius:9px;
+    font-size:0.76rem; font-weight:700; color:var(--ink-faint); background:transparent;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+    transition:background .18s ease, color .18s ease;
+  }
+  .view-btn svg{width:13px; height:13px;}
+  .view-btn.active{background:var(--glass-strong); color:var(--ink);}
+  .view-btn[data-view="buyer"].active{color:var(--gold-ink);}
+  .view-btn[data-view="courier"].active{color:var(--steel-ink);}
+
+  .phone[data-view="courier"] .buyer-only{display:none !important;}
+  .phone[data-view="buyer"] .courier-only{display:none !important;}
+
+  .pin-reveal{display:flex; flex-direction:column; align-items:center; gap:16px; padding:10px 0;}
+  .pin-reveal-digits{display:flex; gap:10px;}
+  .pin-reveal-digits span{
+    width:44px; height:54px; border-radius:12px; background:var(--glass); border:1px solid var(--border-hair-strong);
+    display:flex; align-items:center; justify-content:center; font-size:1.4rem; font-weight:800; font-family:var(--font-mono);
+    color:var(--gold-ink);
+  }
+  .waiting-note{display:flex; align-items:center; gap:8px; font-size:0.78rem; color:var(--ink-faint); font-weight:500;}
+  .waiting-note .dot{width:6px; height:6px; border-radius:50%; background:var(--steel); animation:statusPulse 1.2s infinite;}
+  @media (prefers-reduced-motion:reduce){ .waiting-note .dot{animation:none;} }
+
+  .courier-payout-line{display:flex; justify-content:space-between; align-items:baseline; padding-top:12px; border-top:1px dashed var(--border-hair); font-size:0.83rem;}
+  .courier-payout-line .k{color:var(--ink-faint);}
+  .courier-payout-line .v{font-weight:800; font-family:var(--font-mono); color:var(--steel-ink);}
+
   .hidden{display:none !important;}
 </style>
 
@@ -718,9 +750,20 @@
         </button>
       </div>
 
+      <div class="view-switch" id="viewSwitch">
+        <button class="view-btn active" data-view="buyer">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M6 9h12l-1 11H7L6 9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 9V6a3 3 0 0 1 6 0v3" stroke="currentColor" stroke-width="1.8"/></svg>
+          Buyer
+        </button>
+        <button class="view-btn" data-view="courier">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="5" cy="17" r="2.3" stroke="currentColor" stroke-width="1.7"/><circle cx="17" cy="17" r="2.3" stroke="currentColor" stroke-width="1.7"/><path d="M7 17h5l3-6h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M9 11h4l2 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+          Courier
+        </button>
+      </div>
+
       <div class="app-header">
         <div class="row-top">
-          <h1 class="title">Handover Terminal</h1>
+          <h1 class="title" id="appTitle">Handover</h1>
           <span class="step-tag" id="stepTag" aria-live="polite">Step 1 · Escrow</span>
         </div>
         <div class="progress-rail" id="progressRail">
@@ -882,11 +925,11 @@
               <p id="verifyPrompt">Ask Sipho to enter the 4-digit PIN shared with Lindiwe to release escrow.</p>
             </div>
 
-            <div class="pin-dots" id="pinDots">
+            <div class="courier-only pin-dots" id="pinDots">
               <i data-dot="0"></i><i data-dot="1"></i><i data-dot="2"></i><i data-dot="3"></i>
             </div>
 
-            <div class="keypad" id="keypad">
+            <div class="courier-only keypad" id="keypad">
               <button class="key" data-key="1">1</button>
               <button class="key" data-key="2">2</button>
               <button class="key" data-key="3">3</button>
@@ -901,8 +944,14 @@
               <button class="key back" data-key="back">⌫</button>
             </div>
 
+            <div class="buyer-only pin-reveal">
+              <div class="pin-reveal-digits" id="pinRevealDigits"><span>4</span><span>8</span><span>2</span><span>9</span></div>
+              <p class="waiting-note"><span class="dot"></span>Waiting for your courier to confirm at the door…</p>
+            </div>
+
             <div class="spacer"></div>
-            <button class="cta confirm-btn" id="confirmBtn" disabled>Confirm delivery &amp; release funds</button>
+            <button class="cta confirm-btn courier-only" id="confirmBtn" disabled>Confirm delivery &amp; release funds</button>
+            <button class="cta buyer-only" id="buyerConfirmBtn" style="background:var(--gold);">Simulate courier confirmation →</button>
           </div>
 
           <div id="receiptView" class="hidden" style="display:flex; flex-direction:column; gap:14px; flex:1;">
@@ -922,6 +971,7 @@
               <div class="receipt-row"><span class="k">Verified at</span><span class="v">09:41:07</span></div>
               <div class="receipt-row"><span class="k">Disbursed to</span><span class="v" id="receiptDisbursedTo">Thabo M.</span></div>
               <div class="receipt-total"><span class="k">Total disbursed</span><span class="v" id="receiptTotal">R 2,450.00</span></div>
+              <div class="courier-only courier-payout-line"><span class="k">Your payout</span><span class="v" id="receiptCourierPayout">R 120.00</span></div>
               <div class="barcode"></div>
             </div>
 
@@ -961,14 +1011,31 @@
 <script>
   const STEP_COLORS = ['var(--amber)', 'var(--gold)', 'var(--steel)', 'var(--emerald)'];
   const STEP_SOFT   = ['var(--amber-soft)', 'var(--gold-soft)', 'var(--steel-soft)', 'var(--emerald-soft)'];
-  const STEP_LABELS = ['Step 1 · Dispatch', 'Step 2 · Escrow', 'Step 3 · Tracking', 'Step 4 · Verified'];
+  const STEP_LABELS = {
+    buyer:   ['Step 1 · Order placed', 'Step 2 · Escrow', 'Step 3 · Tracking', 'Step 4 · Share PIN'],
+    courier: ['Step 1 · Job offer', 'Step 2 · Escrow', 'Step 3 · En route', 'Step 4 · Verify delivery']
+  };
 
   const phone = document.getElementById('phone');
   const screens = [...document.querySelectorAll('.screen')];
   const segs = [...document.querySelectorAll('.progress-seg')];
   const legendItems = [...document.querySelectorAll('.legend-item')];
   const stepTag = document.getElementById('stepTag');
+  const appTitle = document.getElementById('appTitle');
   let current = 0;
+  let appView = 'buyer';
+
+  function setView(view){
+    appView = view;
+    phone.dataset.view = view;
+    document.querySelectorAll('.view-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+    appTitle.textContent = view === 'buyer' ? 'Handover' : 'Handover Courier';
+    document.getElementById('simulateResponseBtn').textContent = view === 'buyer'
+      ? 'Check for a courier match →'
+      : 'Simulate courier response →';
+    stepTag.textContent = STEP_LABELS[appView][current];
+    updateVerifyPrompt();
+  }
 
   // ---- Order scenarios: Reset doesn't just replay the same demo, it loads a different order ----
   const SCENARIOS = [
@@ -1072,14 +1139,25 @@
     setText('distanceRemaining', s.distanceRemaining);
 
     // Verification screen
-    setText('verifyPrompt', 'Ask ' + firstName(s.courier) + ' to enter the 4-digit PIN shared with ' + firstName(s.buyer) + ' to release escrow.');
+    const pinDigits = [...document.querySelectorAll('#pinRevealDigits span')];
+    s.pin.split('').forEach((d, i) => { if(pinDigits[i]) pinDigits[i].textContent = d; });
+    updateVerifyPrompt();
     setText('receiptRef', s.ref);
     setText('receiptDisbursedTo', s.seller);
     setText('receiptTotal', money(s.amount));
+    setText('receiptCourierPayout', money(s.transit));
 
     // Modal
     setText('modalAmount', money(s.amount));
     setText('modalText', 'Disbursed to ' + s.seller + ' — escrow closed, transaction ' + s.ref + ' settled.');
+  }
+
+  function updateVerifyPrompt(){
+    const s = currentScenario;
+    const text = appView === 'courier'
+      ? 'Ask ' + firstName(s.buyer) + ' for the 4-digit PIN and enter it below to release escrow.'
+      : 'Your package has arrived. Share this PIN with ' + firstName(s.courier) + ' to release payment.';
+    setText('verifyPrompt', text);
   }
 
   function nextScenario(){
@@ -1103,7 +1181,7 @@
     current = step;
     phone.style.setProperty('--step-color', STEP_COLORS[step]);
     phone.style.setProperty('--step-soft', STEP_SOFT[step]);
-    stepTag.textContent = STEP_LABELS[step];
+    stepTag.textContent = STEP_LABELS[appView][step];
 
     screens.forEach(s => s.classList.toggle('active', Number(s.dataset.screen) === step));
 
@@ -1122,6 +1200,10 @@
   });
   legendItems.forEach(li=>{
     li.addEventListener('click', () => render(Number(li.dataset.step)));
+  });
+
+  document.querySelectorAll('.view-btn').forEach(btn=>{
+    btn.addEventListener('click', () => setView(btn.dataset.view));
   });
 
   // ---- Dispatch: order broadcast + courier accept/decline ----
@@ -1162,9 +1244,15 @@
   }
 
   document.getElementById('simulateResponseBtn').addEventListener('click', () => {
-    showDispatchView(acceptView);
-    startCountdown();
     logEvent('09:12', 'Broadcasting to ' + currentScenario.network + ' and nearby couriers', 'var(--amber)');
+    if(appView === 'courier'){
+      showDispatchView(acceptView);
+      startCountdown();
+    } else {
+      // Buyers don't see the accept/decline mechanics — they just see the match land.
+      showDispatchView(acceptedView);
+      logEvent('09:13', currentScenario.courier + ' matched · ETA to pickup ' + currentScenario.etaPickup, 'var(--steel)');
+    }
   });
 
   document.getElementById('acceptBtn').addEventListener('click', () => {
@@ -1212,10 +1300,21 @@
     updatePin();
   });
 
-  confirmBtn.addEventListener('click', ()=>{
-    if(pin.length !== 4) return;
+  function submitPin(){
     modalOverlay.classList.add('show');
     logEvent('09:41', 'PIN ' + currentScenario.pin + ' submitted · escrow released', 'var(--emerald)');
+  }
+
+  confirmBtn.addEventListener('click', ()=>{
+    if(pin.length !== 4) return;
+    submitPin();
+  });
+
+  document.getElementById('buyerConfirmBtn').addEventListener('click', ()=>{
+    // The buyer doesn't type the PIN themselves — they just watch for their courier's confirmation.
+    pin = currentScenario.pin.split('');
+    updatePin();
+    submitPin();
   });
 
   document.getElementById('viewReceiptBtn').addEventListener('click', ()=>{
@@ -1270,6 +1369,7 @@
     resetAll();
   });
 
+  setView('buyer');
   applyScenario(SCENARIOS[0]);
   resetLog();
 
