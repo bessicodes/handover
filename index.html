@@ -70,6 +70,8 @@
     background:var(--gold-soft); border:1px solid var(--border-hair);
     padding:6px 12px; border-radius:999px; letter-spacing:.01em;
   }
+  .batch-tag{font-family:var(--font-mono); font-size:0.68rem; color:var(--ink-faint); letter-spacing:.03em;}
+  @media (max-width:760px){.batch-tag{display:none;}}
   .status-pill{
     display:flex; align-items:center; gap:7px;
     font-size:0.72rem; font-weight:600; color:var(--ink-faint);
@@ -90,7 +92,36 @@
   }
 
   /* ============ DASHBOARD ============ */
-  .dashboard{display:flex; flex-direction:column; gap:38px; max-width:560px;}
+  .dashboard{display:flex; flex-direction:column; gap:38px; max-width:560px; position:relative;}
+  /* a torn-manifest edge between the dossier and the field unit, instead of plain gutter */
+  .dashboard::after{
+    content:""; position:absolute; top:6px; bottom:6px; right:-32px; width:1px;
+    background-image:radial-gradient(circle, var(--border-hair-strong) 1.3px, transparent 1.4px);
+    background-size:1px 9px; background-repeat:repeat-y;
+  }
+  @media (max-width:900px){.dashboard::after{display:none;}}
+
+  /* ---- Waybill / manifest motifs: the visual language of real courier paperwork ---- */
+  .stamp{
+    position:absolute; display:inline-flex; flex-direction:column; align-items:center; justify-content:center;
+    font-family:var(--font-mono); font-weight:800; font-size:0.6rem; letter-spacing:.09em; text-transform:uppercase;
+    padding:7px 11px; border-radius:4px; border:2px solid currentColor;
+    transform:rotate(-7deg); opacity:0.92; white-space:nowrap; pointer-events:none;
+  }
+  .stamp::before{content:""; position:absolute; inset:-3px; border:1px solid currentColor; border-radius:6px; opacity:.45;}
+  .stamp.escrow{ top:16px; right:16px; color:var(--gold-ink); }
+  .stamp.settled{ position:static; transform:rotate(-8deg); color:var(--emerald-ink); font-size:0.58rem; padding:6px 10px; margin-left:auto; }
+
+  .perf{height:1px; margin:2px 0; background-image:radial-gradient(circle, var(--border-hair-strong) 1.2px, transparent 1.3px); background-size:8px 1px; background-repeat:repeat-x;}
+
+  .barcode{height:20px; border-radius:2px; opacity:.55;
+    background:repeating-linear-gradient(90deg,
+      var(--ink) 0 2px, transparent 2px 3px,
+      var(--ink) 3px 4px, transparent 4px 7px,
+      var(--ink) 7px 8px, transparent 8px 9px,
+      var(--ink) 9px 12px, transparent 12px 14px,
+      var(--ink) 14px 15px, transparent 15px 18px);
+  }
 
   .eyebrow-line{
     display:flex; align-items:center; gap:8px;
@@ -193,8 +224,10 @@
 
   /* ============ PHONE ============ */
   .phone-wrap{position:sticky; top:88px;}
+  /* A rugged field-scanner chassis, not a consumer phone mockup — the device a
+     Courier Guy driver actually carries, not a generic iPhone silhouette. */
   .phone{
-    width:375px; height:772px; border-radius:46px;
+    width:365px; height:772px; border-radius:26px;
     background:radial-gradient(120% 90% at 15% 0%, #171C26, #0A0C10 62%);
     border:1px solid var(--border-hair-strong);
     box-shadow:var(--shadow-deep), inset 0 0 0 1px rgba(255,255,255,0.03);
@@ -205,8 +238,43 @@
     background:radial-gradient(60% 30% at 50% 0%, var(--step-soft), transparent 70%);
     transition:background .5s ease;
   }
-  .notch{position:absolute; top:14px; left:50%; transform:translateX(-50%); width:110px; height:26px; border-radius:16px; background:#000; opacity:.85; z-index:30;}
-  .home-indicator{position:absolute; bottom:9px; left:50%; transform:translateX(-50%); width:120px; height:4px; border-radius:4px; background:rgba(255,255,255,0.35); z-index:30;}
+  /* speaker grille instead of a camera notch */
+  .notch{
+    position:absolute; top:16px; left:50%; transform:translateX(-50%); z-index:30;
+    width:60px; height:8px; border-radius:4px; opacity:.7;
+    background-image:radial-gradient(circle, rgba(0,0,0,.9) 1.1px, transparent 1.2px);
+    background-size:6px 8px; background-repeat:repeat-x;
+  }
+  /* laser-scan window instead of an iOS home indicator */
+  .home-indicator{
+    position:absolute; bottom:14px; left:50%; transform:translateX(-50%); z-index:30;
+    width:64px; height:9px; border-radius:3px; background:#050607;
+    border:1px solid rgba(255,255,255,0.12); overflow:hidden;
+  }
+  .home-indicator::after{
+    content:""; position:absolute; top:0; bottom:0; width:30%;
+    background:linear-gradient(90deg, transparent, rgba(240,70,60,.85), transparent);
+    animation:laserSweep 2.6s ease-in-out infinite;
+  }
+  @keyframes laserSweep{0%{left:-30%;} 50%{left:100%;} 100%{left:-30%;}}
+  @media (prefers-reduced-motion: reduce){ .home-indicator::after{animation:none; left:35%;} }
+  .unit-label{
+    position:absolute; bottom:6px; left:50%; transform:translateX(-50%); z-index:30;
+    font-family:var(--font-mono); font-size:0.5rem; letter-spacing:.1em; color:rgba(255,255,255,0.22);
+  }
+  /* tactile scan-trigger on the right edge */
+  .scan-trigger{
+    position:absolute; right:-4px; top:150px; z-index:30; width:8px; height:56px; border-radius:0 6px 6px 0;
+    background:linear-gradient(180deg, #E3A25B, #B8752E);
+    box-shadow:0 2px 6px rgba(0,0,0,.5), inset -1px 0 0 rgba(255,255,255,.25);
+  }
+  /* subtle rubber-armor hatch on the bezel margins */
+  .phone::after{
+    content:""; position:absolute; inset:0; z-index:1; pointer-events:none; opacity:.05;
+    background-image:repeating-linear-gradient(135deg, #fff 0 1px, transparent 1px 7px);
+    -webkit-mask:radial-gradient(circle at 50% 50%, transparent 62%, #000 63%);
+    mask:radial-gradient(circle at 50% 50%, transparent 62%, #000 63%);
+  }
 
   .statusbar{height:50px; flex:none; display:flex; align-items:flex-end; justify-content:space-between; padding:0 26px 8px; font-family:var(--font-mono); font-size:0.7rem; color:var(--ink-soft); position:relative; z-index:10;}
   .reset-btn{background:var(--glass); border:1px solid var(--border-hair); color:var(--ink-soft); width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:transform .15s ease, background .15s ease;}
@@ -230,7 +298,7 @@
   .glass{background:var(--glass); border:1px solid var(--border-hair); border-radius:18px; padding:16px; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); box-shadow:var(--shadow-card);}
 
   /* Escrow screen */
-  .amount-card{background:linear-gradient(165deg, var(--gold-soft), transparent 65%), var(--glass); border:1px solid var(--border-hair); border-radius:20px; padding:22px 20px; display:flex; flex-direction:column; gap:10px; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); box-shadow:var(--shadow-card);}
+  .amount-card{background:linear-gradient(165deg, var(--gold-soft), transparent 65%), var(--glass); border:1px solid var(--border-hair); border-radius:20px; padding:22px 20px; display:flex; flex-direction:column; gap:10px; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); box-shadow:var(--shadow-card); position:relative;}
   .amount-card .lock-badge{width:38px; height:38px; border-radius:12px; background:var(--gold); color:#1c1506; display:flex; align-items:center; justify-content:center;}
   .amount-card .amount{font-weight:900; font-size:2.25rem; font-variant-numeric:tabular-nums; letter-spacing:-0.03em; margin:2px 0 0; color:#fff;}
   .amount-card .status-line{display:flex; align-items:center; gap:7px; font-size:0.8rem; color:var(--gold-ink); font-weight:700;}
@@ -332,13 +400,21 @@
   .modal-overlay.show{opacity:1; pointer-events:auto;}
   .modal-card{width:86%; border-radius:24px; padding:32px 24px 26px; background:var(--glass-strong); border:1px solid var(--border-hair-strong); display:flex; flex-direction:column; align-items:center; text-align:center; gap:14px; transform:translateY(14px) scale(0.96); transition:transform .35s cubic-bezier(.34,1.56,.64,1); box-shadow:var(--shadow-deep);}
   .modal-overlay.show .modal-card{transform:translateY(0) scale(1);}
-  .shield-ring{width:76px; height:76px; border-radius:50%; background:var(--emerald-soft); display:flex; align-items:center; justify-content:center; flex:none; animation:shieldPulse 2s ease-in-out infinite;}
-  @keyframes shieldPulse{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,.5);} 50%{box-shadow:0 0 0 14px rgba(16,185,129,0);}}
-  @media (prefers-reduced-motion: reduce){ .shield-ring{animation:none;} }
-  .shield-ring svg{width:36px; height:36px;}
-  .shield-ring path.draw{stroke-dasharray:40; stroke-dashoffset:40; animation:drawCheck .5s ease forwards .15s;}
-  @keyframes drawCheck{to{stroke-dashoffset:0;}}
-  @media (prefers-reduced-motion: reduce){ .shield-ring path.draw{animation:none; stroke-dashoffset:0;} }
+  /* an ink stamp landing on the manifest, not a generic checkmark-in-a-circle */
+  .verify-stamp{display:flex; align-items:center; justify-content:center;}
+  .stamp-ring{
+    width:84px; height:84px; border-radius:50%; border:3px solid var(--emerald); color:var(--emerald);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+    transform:rotate(-9deg); position:relative; flex:none;
+    background:radial-gradient(circle at 32% 30%, rgba(16,185,129,.16), transparent 62%);
+  }
+  .stamp-ring::before{content:""; position:absolute; inset:5px; border:1px solid var(--emerald); border-radius:50%; opacity:.5;}
+  .stamp-ring svg{width:26px; height:26px;}
+  .stamp-word{font-family:var(--font-mono); font-size:0.56rem; font-weight:800; letter-spacing:.12em;}
+  .modal-overlay.show .stamp-ring{animation:stampThump .45s cubic-bezier(.2,1.4,.4,1) both;}
+  #receiptView:not(.hidden) .stamp-ring{animation:stampThump .45s cubic-bezier(.2,1.4,.4,1) both;}
+  @keyframes stampThump{0%{transform:rotate(-9deg) scale(2.4); opacity:0;} 60%{transform:rotate(-9deg) scale(0.92); opacity:1;} 100%{transform:rotate(-9deg) scale(1);}}
+  @media (prefers-reduced-motion: reduce){ .stamp-ring{animation:none !important;} }
   .modal-card h3{margin:0; font-weight:800; font-size:1.16rem; letter-spacing:-0.02em;}
   .modal-card .disbursed{font-weight:900; font-size:1.55rem; color:var(--emerald); font-variant-numeric:tabular-nums; letter-spacing:-0.02em;}
   .modal-card p{margin:0; font-size:0.82rem; color:var(--ink-soft); line-height:1.5; font-weight:400;}
@@ -373,6 +449,7 @@
     </div>
     <div class="masthead-right">
       <span class="audience-pill">Prepared for The Courier Guy</span>
+      <span class="batch-tag">Waybill HX-4829</span>
       <span class="status-pill"><i class="status-dot"></i>Systems nominal</span>
     </div>
   </div>
@@ -420,7 +497,15 @@
           <div class="fin-row"><span class="swatch" style="background:var(--steel);"></span><span class="label">Driver transit fare</span><span class="pct">4.9%</span><span class="val">R120.00</span></div>
           <div class="fin-row"><span class="swatch" style="background:var(--emerald);"></span><span class="label">Net seller payout</span><span class="pct">91.6%</span><span class="val">R2,244.25</span></div>
         </div>
-        <div class="fin-total"><span class="k">Transaction total</span><span class="v">R2,450.00</span></div>
+        <div class="perf" style="margin-top:12px;"></div>
+        <div class="fin-total" style="border-top:none; padding-top:12px;">
+          <span class="k">Transaction total</span>
+          <span style="display:flex; align-items:center; gap:12px;">
+            <span class="stamp settled">Settled</span>
+            <span class="v">R2,450.00</span>
+          </span>
+        </div>
+        <div class="barcode" style="margin-top:14px;"></div>
       </div>
     </div>
 
@@ -524,6 +609,8 @@
   <div class="phone-wrap">
     <div class="phone" id="phone">
       <div class="notch"></div>
+      <div class="scan-trigger"></div>
+      <div class="unit-label">CG · FIELD UNIT 07</div>
 
       <div class="statusbar">
         <span>9:41</span>
@@ -535,7 +622,7 @@
 
       <div class="app-header">
         <div class="row-top">
-          <h1 class="title">Handover Loop</h1>
+          <h1 class="title">Handover Terminal</h1>
           <span class="step-tag" id="stepTag">Step 1 · Escrow</span>
         </div>
         <div class="progress-rail" id="progressRail">
@@ -550,6 +637,7 @@
         <!-- SCREEN 1 — ESCROW -->
         <section class="screen" data-screen="0">
           <div class="amount-card">
+            <span class="stamp escrow">Escrow&nbsp;Secured</span>
             <div class="lock-badge">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 11V8a6 6 0 0 1 12 0v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="4" y="11" width="16" height="10" rx="3" fill="currentColor"/></svg>
             </div>
@@ -641,8 +729,11 @@
 
           <div id="receiptView" class="hidden" style="display:flex; flex-direction:column; gap:14px; flex:1;">
             <div class="verify-head">
-              <div class="shield-ring" style="margin-bottom:4px; animation:none;">
-                <svg viewBox="0 0 24 24" fill="none"><path d="M12 2l7 3v6c0 5-3.5 9-7 11-3.5-2-7-6-7-11V5l7-3Z" stroke="var(--emerald)" stroke-width="1.6"/><path class="draw" d="M8.5 12.2l2.4 2.4L15.7 9.4" stroke="var(--emerald)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <div class="verify-stamp" style="margin-bottom:4px;">
+                <div class="stamp-ring">
+                  <svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span class="stamp-word">Verified</span>
+                </div>
               </div>
               <h2>Handover complete</h2>
               <p>Escrow released automatically the moment the PIN was confirmed on-site.</p>
@@ -653,6 +744,7 @@
               <div class="receipt-row"><span class="k">Verified at</span><span class="v">09:41:07</span></div>
               <div class="receipt-row"><span class="k">Disbursed to</span><span class="v">Thabo M.</span></div>
               <div class="receipt-total"><span class="k">Total disbursed</span><span class="v">R 2,450.00</span></div>
+              <div class="barcode"></div>
             </div>
 
             <div class="glass link-row">View full receipt <span aria-hidden="true">→</span></div>
@@ -668,12 +760,16 @@
       <!-- Fullscreen confirmation modal -->
       <div class="modal-overlay" id="modalOverlay">
         <div class="modal-card">
-          <div class="shield-ring">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M12 2l7 3v6c0 5-3.5 9-7 11-3.5-2-7-6-7-11V5l7-3Z" stroke="var(--emerald)" stroke-width="1.6"/><path class="draw" d="M8.5 12.2l2.4 2.4L15.7 9.4" stroke="var(--emerald)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="verify-stamp">
+            <div class="stamp-ring">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span class="stamp-word">Verified</span>
+            </div>
           </div>
           <h3>Handover verified</h3>
           <div class="disbursed">R 2,450.00</div>
           <p>Disbursed to Thabo M. — escrow closed, transaction HX-4829 settled.</p>
+          <div class="barcode" style="width:100%;"></div>
           <button class="cta" id="viewReceiptBtn" style="background:var(--emerald);">View receipt</button>
         </div>
       </div>
