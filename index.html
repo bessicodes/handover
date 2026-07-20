@@ -541,6 +541,31 @@
   .courier-payout-line .k{color:var(--ink-faint);}
   .courier-payout-line .v{font-weight:800; font-family:var(--font-mono); color:var(--steel-ink);}
 
+  /* Full-screen launch — turns the mockup into something you can actually test on your own phone */
+  .fullscreen-btn{
+    display:flex; align-items:center; justify-content:center; gap:8px; width:100%;
+    background:var(--surface-2); border:1px solid var(--border-hair); color:var(--ink);
+    padding:12px 16px; border-radius:14px; font-weight:700; font-size:0.84rem; cursor:pointer;
+    margin-bottom:14px; box-shadow:var(--shadow-card); transition:border-color .15s ease, transform .12s ease;
+  }
+  .fullscreen-btn:hover{border-color:var(--border-hair-strong);}
+  .fullscreen-btn:active{transform:scale(0.98);}
+  @media (min-width:901px){ .fullscreen-btn{display:none;} }
+
+  .exit-fs-btn{
+    display:none; position:absolute; top:14px; right:16px; z-index:50;
+    width:28px; height:28px; border-radius:50%; align-items:center; justify-content:center;
+    background:var(--glass); border:1px solid var(--border-hair); color:var(--ink); cursor:pointer;
+  }
+  .phone.fullscreen{
+    position:fixed; inset:0; width:100vw; height:100vh; height:100dvh;
+    border-radius:0; z-index:1000; border:none; box-shadow:none;
+  }
+  .phone.fullscreen .exit-fs-btn{display:flex;}
+  .phone.fullscreen .notch, .phone.fullscreen .scan-trigger, .phone.fullscreen .unit-label,
+  .phone.fullscreen .statusbar span{display:none;}
+  body.fs-lock{overflow:hidden;}
+
   .hidden{display:none !important;}
 </style>
 
@@ -737,10 +762,17 @@
 
   <!-- ============ RIGHT: PHONE ============ -->
   <div class="phone-wrap">
+    <button class="fullscreen-btn" id="fullscreenBtn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 9V5a1 1 0 0 1 1-1h4M20 9V5a1 1 0 0 0-1-1h-4M4 15v4a1 1 0 0 0 1 1h4M20 15v4a1 1 0 0 1-1 1h-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Open full-screen app
+    </button>
     <div class="phone" id="phone">
       <div class="notch"></div>
       <div class="scan-trigger"></div>
       <div class="unit-label">CG · FIELD UNIT 07</div>
+      <button class="exit-fs-btn" id="exitFullscreenBtn" aria-label="Exit full screen" title="Exit full screen">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+      </button>
 
       <div class="statusbar">
         <span>9:41</span>
@@ -1204,6 +1236,21 @@
 
   document.querySelectorAll('.view-btn').forEach(btn=>{
     btn.addEventListener('click', () => setView(btn.dataset.view));
+  });
+
+  // ---- Full-screen mode: run the prototype as a real app on the visitor's own phone ----
+  function enterFullscreen(){
+    phone.classList.add('fullscreen');
+    document.body.classList.add('fs-lock');
+  }
+  function exitFullscreen(){
+    phone.classList.remove('fullscreen');
+    document.body.classList.remove('fs-lock');
+  }
+  document.getElementById('fullscreenBtn').addEventListener('click', enterFullscreen);
+  document.getElementById('exitFullscreenBtn').addEventListener('click', exitFullscreen);
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape' && phone.classList.contains('fullscreen')) exitFullscreen();
   });
 
   // ---- Dispatch: order broadcast + courier accept/decline ----
