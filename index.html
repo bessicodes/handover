@@ -499,6 +499,16 @@
   }
   .key:focus-visible{outline:2px solid var(--gold); outline-offset:1px;}
 
+  .new-order-btn{
+    display:flex; align-items:center; gap:6px; font-size:0.7rem; font-weight:700;
+    color:var(--ink-soft); background:var(--surface-2); border:1px solid var(--border-hair);
+    padding:6px 10px; border-radius:999px; cursor:pointer; transition:transform .15s ease, border-color .15s ease, color .15s ease;
+  }
+  .new-order-btn:hover{border-color:var(--border-hair-strong); color:var(--ink);}
+  .new-order-btn:active{transform:scale(0.96);}
+  .new-order-btn svg{transition:transform .3s ease;}
+  .new-order-btn.spin svg{transform:rotate(-180deg);}
+
   .hidden{display:none !important;}
 </style>
 
@@ -518,7 +528,7 @@
     </div>
     <div class="masthead-right">
       <span class="audience-pill">Prepared for The Courier Guy</span>
-      <span class="batch-tag">Waybill HX-4829</span>
+      <span class="batch-tag">Waybill <span id="mastheadRef">HX-4829</span></span>
       <span class="status-pill"><i class="status-dot"></i>Systems nominal</span>
     </div>
   </div>
@@ -554,8 +564,14 @@
     <!-- LIVE ACTIVITY LOG -->
     <div class="db-section">
       <div class="head">
-        <span class="eyebrow">Live Activity Log</span>
-        <h3>Audit trail for HX-4829</h3>
+        <div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px;">
+          <span class="eyebrow">Live Activity Log</span>
+          <button class="new-order-btn" id="newOrderBtn">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M4 4v6h6M20 20v-6h-6M5.5 9a7 7 0 0 1 12.5-3.5M18.5 15a7 7 0 0 1-12.5 3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            New order
+          </button>
+        </div>
+        <h3>Audit trail for <span id="logHeadingRef">HX-4829</span></h3>
         <p class="note-line">Every state change on the right is recorded here — this is the ledger a courier partner or auditor would actually see.</p>
       </div>
       <div class="panel log-panel" id="activityLog"></div>
@@ -565,26 +581,26 @@
     <div class="db-section">
       <div class="head">
         <span class="eyebrow">Financial Architecture</span>
-        <h3>Where the R2,450.00 goes</h3>
+        <h3>Where the <span id="finHeadingAmount">R 2,450.00</span> goes</h3>
         <p class="note-line">Revenue architecture: 3.5% escrow fee (buyer-paid), a distance-indexed logistics markup, and an optional insurance upsell.</p>
       </div>
       <div class="panel">
         <div class="fin-bar">
           <span style="width:3.5%; background:var(--gold);"></span>
-          <span style="width:4.9%; background:var(--steel);"></span>
-          <span style="width:91.6%; background:var(--emerald);"></span>
+          <span id="finBarTransit" style="width:4.9%; background:var(--steel);"></span>
+          <span id="finBarNet" style="width:91.6%; background:var(--emerald);"></span>
         </div>
         <div class="fin-rows">
-          <div class="fin-row"><span class="swatch" style="background:var(--gold);"></span><span class="label">Handover escrow fee</span><span class="pct">3.5%</span><span class="val">R85.75</span></div>
-          <div class="fin-row"><span class="swatch" style="background:var(--steel);"></span><span class="label">Driver transit fare</span><span class="pct">4.9%</span><span class="val">R120.00</span></div>
-          <div class="fin-row"><span class="swatch" style="background:var(--emerald);"></span><span class="label">Net seller payout</span><span class="pct">91.6%</span><span class="val">R2,244.25</span></div>
+          <div class="fin-row"><span class="swatch" style="background:var(--gold);"></span><span class="label">Handover escrow fee</span><span class="pct">3.5%</span><span class="val" id="finFeeVal">R85.75</span></div>
+          <div class="fin-row"><span class="swatch" style="background:var(--steel);"></span><span class="label">Driver transit fare</span><span class="pct" id="finTransitPct">4.9%</span><span class="val" id="finTransitVal">R120.00</span></div>
+          <div class="fin-row"><span class="swatch" style="background:var(--emerald);"></span><span class="label">Net seller payout</span><span class="pct" id="finNetPct">91.6%</span><span class="val" id="finNetVal">R2,244.25</span></div>
         </div>
         <div class="perf" style="margin-top:12px;"></div>
         <div class="fin-total" style="border-top:none; padding-top:12px;">
           <span class="k">Transaction total</span>
           <span style="display:flex; align-items:center; gap:12px;">
             <span class="stamp settled">Settled</span>
-            <span class="v">R2,450.00</span>
+            <span class="v" id="finTotalVal">R2,450.00</span>
           </span>
         </div>
         <div class="barcode" style="margin-top:14px;"></div>
@@ -723,13 +739,13 @@
           <div id="broadcastView" style="display:flex; flex-direction:column; gap:14px; flex:1;">
             <div class="glass order-card">
               <div class="order-route">
-                <span class="stop"><span class="stop-dot a"></span>Thabo M.</span>
+                <span class="stop"><span class="stop-dot a"></span><span id="orderSeller">Thabo M.</span></span>
                 <span class="arrow">→</span>
-                <span class="stop"><span class="stop-dot b"></span>Lindiwe K.</span>
+                <span class="stop"><span class="stop-dot b"></span><span id="orderBuyer">Lindiwe K.</span></span>
               </div>
-              <div class="job-detail-row"><span class="k">Item value</span><span class="v">R 2,450.00</span></div>
-              <div class="job-detail-row"><span class="k">Courier payout</span><span class="v payout">R 120.00</span></div>
-              <div class="job-detail-row"><span class="k">Waybill</span><span class="v">HX-4829</span></div>
+              <div class="job-detail-row"><span class="k">Item value</span><span class="v" id="orderItemValue">R 2,450.00</span></div>
+              <div class="job-detail-row"><span class="k">Courier payout</span><span class="v payout" id="orderPayout">R 120.00</span></div>
+              <div class="job-detail-row"><span class="k">Waybill</span><span class="v" id="orderWaybill">HX-4829</span></div>
             </div>
 
             <div class="broadcast-hub">
@@ -739,7 +755,7 @@
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6.3 6.3l2.1 2.1M15.6 15.6l2.1 2.1M6.3 17.7l2.1-2.1M15.6 8.4l2.1-2.1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.7"/></svg>
                 </div>
               </div>
-              <p class="broadcast-copy">Broadcasting to <strong>The Courier Guy</strong> fleet and independent couriers within 3&nbsp;km.</p>
+              <p class="broadcast-copy">Broadcasting to <strong id="broadcastNetwork">The Courier Guy</strong> fleet and independent couriers within 3&nbsp;km.</p>
             </div>
 
             <div class="spacer"></div>
@@ -749,24 +765,24 @@
           <div id="acceptView" class="hidden" style="display:flex; flex-direction:column; gap:14px; flex:1;">
             <div class="glass job-offer">
               <div class="job-offer-head">
-                <span class="tag">Incoming job · The Courier Guy</span>
+                <span class="tag">Incoming job · <span id="offerNetwork">The Courier Guy</span></span>
                 <div class="countdown-ring" id="countdownRing"><span id="countdownNum">12</span></div>
               </div>
               <div class="courier-row">
-                <div class="avatar">SN</div>
+                <div class="avatar" id="offerAvatar">SN</div>
                 <div class="courier-info">
-                  <div class="name">Sipho N.</div>
-                  <div class="meta">Motorcycle · 1.2 km to pickup</div>
+                  <div class="name" id="offerName">Sipho N.</div>
+                  <div class="meta" id="offerMeta">Motorcycle · 1.2 km to pickup</div>
                   <div class="profile-badges">
                     <span class="badge"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>ID verified</span>
                     <span class="badge"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Smart-Weight equipped</span>
                   </div>
                 </div>
-                <div class="rating"><div class="star">★ 4.9</div><div class="meta">312 handovers</div></div>
+                <div class="rating"><div class="star" id="offerRating">★ 4.9</div><div class="meta" id="offerHandovers">312 handovers</div></div>
               </div>
-              <div class="job-detail-row"><span class="k">Pickup</span><span class="v">Thabo M., Sandton</span></div>
-              <div class="job-detail-row"><span class="k">Dropoff</span><span class="v">Lindiwe K., Rosebank</span></div>
-              <div class="job-detail-row"><span class="k">Payout</span><span class="v payout">R 120.00</span></div>
+              <div class="job-detail-row"><span class="k">Pickup</span><span class="v" id="offerPickup">Thabo M., Sandton</span></div>
+              <div class="job-detail-row"><span class="k">Dropoff</span><span class="v" id="offerDropoff">Lindiwe K., Rosebank</span></div>
+              <div class="job-detail-row"><span class="k">Payout</span><span class="v payout" id="offerPayout">R 120.00</span></div>
             </div>
             <div class="offer-actions">
               <button class="cta decline-btn" id="declineBtn">Decline</button>
@@ -780,10 +796,10 @@
 
           <div id="acceptedView" class="hidden" style="display:flex; flex-direction:column; gap:14px; flex:1;">
             <div class="glass" style="display:flex; align-items:center; gap:12px;">
-              <div class="avatar">SN</div>
+              <div class="avatar" id="acceptedAvatar">SN</div>
               <div class="courier-info">
-                <div class="name">Sipho N. accepted the job</div>
-                <div class="meta">ETA to pickup · 4 min</div>
+                <div class="name" id="acceptedName">Sipho N. accepted the job</div>
+                <div class="meta" id="acceptedEta">ETA to pickup · 4 min</div>
               </div>
             </div>
             <div class="spacer"></div>
@@ -799,14 +815,14 @@
             <div class="lock-badge">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 11V8a6 6 0 0 1 12 0v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="4" y="11" width="16" height="10" rx="3" fill="currentColor"/></svg>
             </div>
-            <div class="amount">R 2,450.00</div>
+            <div class="amount" id="escrowAmount">R 2,450.00</div>
             <div class="status-line"><span class="pulse"></span>Secured in escrow</div>
-            <p class="note">Held until Sipho confirms delivery with a one-time PIN. Neither party can move it before then.</p>
+            <p class="note" id="escrowNote">Held until Sipho confirms delivery with a one-time PIN. Neither party can move it before then.</p>
           </div>
 
           <div class="glass">
             <div class="timeline">
-              <div class="t-row done"><div class="t-rail"><div class="t-dot"></div><div class="t-line"></div></div><div class="t-body"><p class="t-title">Order placed</p><p class="t-meta">09:12 · Ref HX-4829</p></div></div>
+              <div class="t-row done"><div class="t-rail"><div class="t-dot"></div><div class="t-line"></div></div><div class="t-body"><p class="t-title">Order placed</p><p class="t-meta">09:12 · Ref <span id="timelineRef">HX-4829</span></p></div></div>
               <div class="t-row current"><div class="t-rail"><div class="t-dot"></div><div class="t-line"></div></div><div class="t-body"><p class="t-title">Funds locked in escrow</p><p class="t-meta">09:13 · Confirmed</p></div></div>
               <div class="t-row"><div class="t-rail"><div class="t-dot"></div><div class="t-line"></div></div><div class="t-body"><p class="t-title">In transit</p></div></div>
               <div class="t-row"><div class="t-rail"><div class="t-dot"></div></div><div class="t-body"><p class="t-title">Delivered &amp; verified</p></div></div>
@@ -814,9 +830,9 @@
           </div>
 
           <div class="parties">
-            <div class="chip"><span class="role">Seller</span><span class="name">Thabo M.</span></div>
-            <div class="chip"><span class="role">Courier</span><span class="name">Sipho N.</span></div>
-            <div class="chip"><span class="role">Buyer</span><span class="name">Lindiwe K.</span></div>
+            <div class="chip"><span class="role">Seller</span><span class="name" id="chipSeller">Thabo M.</span></div>
+            <div class="chip"><span class="role">Courier</span><span class="name" id="chipCourier">Sipho N.</span></div>
+            <div class="chip"><span class="role">Buyer</span><span class="name" id="chipBuyer">Lindiwe K.</span></div>
           </div>
 
           <div class="spacer"></div>
@@ -829,28 +845,28 @@
             <div class="map-grid" id="mapGrid"></div>
             <div class="route-seg route-v"></div>
             <div class="route-seg route-h"></div>
-            <div class="pin sender"><div class="dot"></div><span class="pin-lbl">Pickup · Thabo</span></div>
-            <div class="pin recipient"><div class="dot"></div><span class="pin-lbl">Dropoff · Lindiwe</span></div>
+            <div class="pin sender"><div class="dot"></div><span class="pin-lbl" id="mapPickupLbl">Pickup · Thabo</span></div>
+            <div class="pin recipient"><div class="dot"></div><span class="pin-lbl" id="mapDropoffLbl">Dropoff · Lindiwe</span></div>
             <div class="courier-dot"></div>
-            <div class="eta-badge"><div class="num">6 min</div><div class="lbl">To dropoff</div></div>
+            <div class="eta-badge"><div class="num" id="etaVal">6 min</div><div class="lbl">To dropoff</div></div>
           </div>
 
           <div class="glass courier-row">
-            <div class="avatar">SN</div>
+            <div class="avatar" id="trackAvatar">SN</div>
             <div class="courier-info">
-              <div class="name">Sipho N.</div>
-              <div class="meta">The Courier Guy · CA 442-190</div>
+              <div class="name" id="trackName">Sipho N.</div>
+              <div class="meta" id="trackMeta">The Courier Guy · CA 442-190</div>
               <div class="profile-badges">
                 <span class="badge"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>ID verified</span>
-                <span class="badge"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>312 handovers</span>
+                <span class="badge" id="trackHandoversBadge"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>312 handovers</span>
               </div>
             </div>
-            <div class="rating"><div class="star">★ 4.9</div></div>
+            <div class="rating"><div class="star" id="trackRating">★ 4.9</div></div>
           </div>
 
           <div class="glass">
             <div class="distance-bar"><i></i></div>
-            <div class="distance-labels"><span>Picked up</span><span>1.8 km left</span><span>Dropoff</span></div>
+            <div class="distance-labels"><span>Picked up</span><span id="distanceRemaining">1.8 km left</span><span>Dropoff</span></div>
           </div>
 
           <div class="spacer"></div>
@@ -863,7 +879,7 @@
           <div id="pinView" style="display:flex; flex-direction:column; gap:14px; flex:1;">
             <div class="verify-head">
               <h2>Verify handover</h2>
-              <p>Ask Sipho to enter the 4-digit PIN shared with Lindiwe to release escrow.</p>
+              <p id="verifyPrompt">Ask Sipho to enter the 4-digit PIN shared with Lindiwe to release escrow.</p>
             </div>
 
             <div class="pin-dots" id="pinDots">
@@ -902,10 +918,10 @@
             </div>
 
             <div class="glass receipt-card">
-              <div class="receipt-row"><span class="k">Transaction</span><span class="v">HX-4829</span></div>
+              <div class="receipt-row"><span class="k">Transaction</span><span class="v" id="receiptRef">HX-4829</span></div>
               <div class="receipt-row"><span class="k">Verified at</span><span class="v">09:41:07</span></div>
-              <div class="receipt-row"><span class="k">Disbursed to</span><span class="v">Thabo M.</span></div>
-              <div class="receipt-total"><span class="k">Total disbursed</span><span class="v">R 2,450.00</span></div>
+              <div class="receipt-row"><span class="k">Disbursed to</span><span class="v" id="receiptDisbursedTo">Thabo M.</span></div>
+              <div class="receipt-total"><span class="k">Total disbursed</span><span class="v" id="receiptTotal">R 2,450.00</span></div>
               <div class="barcode"></div>
             </div>
 
@@ -929,8 +945,8 @@
             </div>
           </div>
           <h3>Handover verified</h3>
-          <div class="disbursed">R 2,450.00</div>
-          <p>Disbursed to Thabo M. — escrow closed, transaction HX-4829 settled.</p>
+          <div class="disbursed" id="modalAmount">R 2,450.00</div>
+          <p id="modalText">Disbursed to Thabo M. — escrow closed, transaction HX-4829 settled.</p>
           <div class="barcode" style="width:100%;"></div>
           <button class="cta" id="viewReceiptBtn" style="background:var(--emerald);">View receipt</button>
         </div>
@@ -953,6 +969,123 @@
   const legendItems = [...document.querySelectorAll('.legend-item')];
   const stepTag = document.getElementById('stepTag');
   let current = 0;
+
+  // ---- Order scenarios: Reset doesn't just replay the same demo, it loads a different order ----
+  const SCENARIOS = [
+    { ref:'HX-4829', amount:2450.00, transit:120.00, seller:'Thabo M.', buyer:'Lindiwe K.',
+      courier:'Sipho N.', initials:'SN', vehicle:'Motorcycle', plate:'CA 442-190', network:'The Courier Guy',
+      rating:'4.9', handovers:312, pickupSuburb:'Sandton', dropoffSuburb:'Rosebank',
+      distancePickup:'1.2 km', etaPickup:'4 min', etaDropoff:'6 min', distanceRemaining:'1.8 km left' },
+    { ref:'HX-7213', amount:890.00, transit:45.00, seller:'Naledi K.', buyer:'Johan P.',
+      courier:'Marcus D.', initials:'MD', vehicle:'Bicycle', plate:'Independent rider', network:'Independent · pudo Network',
+      rating:'4.7', handovers:128, pickupSuburb:'Melville', dropoffSuburb:'Auckland Park',
+      distancePickup:'0.6 km', etaPickup:'5 min', etaDropoff:'9 min', distanceRemaining:'0.9 km left' },
+    { ref:'HX-3390', amount:6200.00, transit:180.00, seller:'Zanele M.', buyer:'Werner B.',
+      courier:'Ayanda T.', initials:'AT', vehicle:'Van', plate:'GP 118-556', network:'The Courier Guy',
+      rating:'5.0', handovers:540, pickupSuburb:'Fourways', dropoffSuburb:'Bryanston',
+      distancePickup:'2.1 km', etaPickup:'3 min', etaDropoff:'5 min', distanceRemaining:'2.4 km left' },
+    { ref:'HX-5567', amount:1340.00, transit:95.00, seller:'Kagiso R.', buyer:'Amahle S.',
+      courier:'Pieter V.', initials:'PV', vehicle:'Motorcycle', plate:'CA 902-741', network:'The Courier Guy',
+      rating:'4.8', handovers:201, pickupSuburb:'Melrose', dropoffSuburb:'Parkhurst',
+      distancePickup:'1.5 km', etaPickup:'4 min', etaDropoff:'7 min', distanceRemaining:'1.5 km left' }
+  ];
+  let scenarioIndex = 0;
+  let currentScenario = SCENARIOS[0];
+
+  function money(n){
+    return 'R ' + n.toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 });
+  }
+  function moneyCompact(n){
+    return 'R' + n.toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 });
+  }
+  function firstName(full){ return full.split(' ')[0]; }
+  function setText(id, text){ const el = document.getElementById(id); if(el) el.textContent = text; }
+
+  function applyScenario(s){
+    currentScenario = s;
+    const fee = Math.round(s.amount * 0.035 * 100) / 100;
+    const net = Math.round((s.amount - fee - s.transit) * 100) / 100;
+    const transitPct = ((s.transit / s.amount) * 100).toFixed(1) + '%';
+    const netPct = ((net / s.amount) * 100).toFixed(1) + '%';
+    s.pin = (s.ref.match(/\d+/)[0]).slice(-4);
+
+    // Masthead + log heading
+    setText('mastheadRef', s.ref);
+    setText('logHeadingRef', s.ref);
+
+    // Financial architecture
+    setText('finHeadingAmount', money(s.amount));
+    setText('finFeeVal', moneyCompact(fee));
+    setText('finTransitPct', transitPct);
+    setText('finTransitVal', moneyCompact(s.transit));
+    setText('finNetPct', netPct);
+    setText('finNetVal', moneyCompact(net));
+    setText('finTotalVal', moneyCompact(s.amount));
+    const barTransit = document.getElementById('finBarTransit');
+    const barNet = document.getElementById('finBarNet');
+    if(barTransit) barTransit.style.width = transitPct;
+    if(barNet) barNet.style.width = netPct;
+
+    // Dispatch — order card
+    setText('orderSeller', s.seller);
+    setText('orderBuyer', s.buyer);
+    setText('orderItemValue', money(s.amount));
+    setText('orderPayout', money(s.transit));
+    setText('orderWaybill', s.ref);
+    setText('broadcastNetwork', s.network);
+
+    // Dispatch — job offer
+    setText('offerNetwork', s.network);
+    setText('offerAvatar', s.initials);
+    setText('offerName', s.courier);
+    setText('offerMeta', s.vehicle + ' · ' + s.distancePickup + ' to pickup');
+    setText('offerRating', '★ ' + s.rating);
+    setText('offerHandovers', s.handovers + ' handovers');
+    setText('offerPickup', s.seller + ', ' + s.pickupSuburb);
+    setText('offerDropoff', s.buyer + ', ' + s.dropoffSuburb);
+    setText('offerPayout', money(s.transit));
+    setText('acceptedAvatar', s.initials);
+    setText('acceptedName', s.courier + ' accepted the job');
+    setText('acceptedEta', 'ETA to pickup · ' + s.etaPickup);
+
+    // Escrow screen
+    setText('escrowAmount', money(s.amount));
+    setText('escrowNote', 'Held until ' + firstName(s.courier) + ' confirms delivery with a one-time PIN. Neither party can move it before then.');
+    setText('timelineRef', s.ref);
+    setText('chipSeller', s.seller);
+    setText('chipCourier', s.courier);
+    setText('chipBuyer', s.buyer);
+
+    // Tracking screen
+    setText('mapPickupLbl', 'Pickup · ' + firstName(s.seller));
+    setText('mapDropoffLbl', 'Dropoff · ' + firstName(s.buyer));
+    setText('etaVal', s.etaDropoff);
+    setText('trackAvatar', s.initials);
+    setText('trackName', s.courier);
+    setText('trackMeta', s.network + (s.plate.match(/^[A-Z]{2} /) ? ' · ' + s.plate : ''));
+    setText('trackHandoversBadge', '');
+    const trackBadge = document.getElementById('trackHandoversBadge');
+    if(trackBadge){
+      trackBadge.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>' + s.handovers + ' handovers';
+    }
+    setText('trackRating', '★ ' + s.rating);
+    setText('distanceRemaining', s.distanceRemaining);
+
+    // Verification screen
+    setText('verifyPrompt', 'Ask ' + firstName(s.courier) + ' to enter the 4-digit PIN shared with ' + firstName(s.buyer) + ' to release escrow.');
+    setText('receiptRef', s.ref);
+    setText('receiptDisbursedTo', s.seller);
+    setText('receiptTotal', money(s.amount));
+
+    // Modal
+    setText('modalAmount', money(s.amount));
+    setText('modalText', 'Disbursed to ' + s.seller + ' — escrow closed, transaction ' + s.ref + ' settled.');
+  }
+
+  function nextScenario(){
+    scenarioIndex = (scenarioIndex + 1) % SCENARIOS.length;
+    applyScenario(SCENARIOS[scenarioIndex]);
+  }
 
   const grid = document.getElementById('mapGrid');
   for(let i=0;i<54;i++){
@@ -1031,13 +1164,13 @@
   document.getElementById('simulateResponseBtn').addEventListener('click', () => {
     showDispatchView(acceptView);
     startCountdown();
-    logEvent('09:12', 'Broadcasting to The Courier Guy fleet and independent couriers', 'var(--amber)');
+    logEvent('09:12', 'Broadcasting to ' + currentScenario.network + ' and nearby couriers', 'var(--amber)');
   });
 
   document.getElementById('acceptBtn').addEventListener('click', () => {
     stopCountdown();
     showDispatchView(acceptedView);
-    logEvent('09:13', 'Sipho N. accepted the job · ETA to pickup 4 min', 'var(--steel)');
+    logEvent('09:13', currentScenario.courier + ' accepted the job · ETA to pickup ' + currentScenario.etaPickup, 'var(--steel)');
   });
 
   document.getElementById('declineBtn').addEventListener('click', () => {
@@ -1082,21 +1215,21 @@
   confirmBtn.addEventListener('click', ()=>{
     if(pin.length !== 4) return;
     modalOverlay.classList.add('show');
-    logEvent('09:41', 'PIN 4829 submitted · escrow released', 'var(--emerald)');
+    logEvent('09:41', 'PIN ' + currentScenario.pin + ' submitted · escrow released', 'var(--emerald)');
   });
 
   document.getElementById('viewReceiptBtn').addEventListener('click', ()=>{
     modalOverlay.classList.remove('show');
     pinView.classList.add('hidden');
     receiptView.classList.remove('hidden');
-    logEvent('09:41', 'R2,450.00 disbursed to Thabo M. · transaction closed', 'var(--emerald)');
+    logEvent('09:41', moneyCompact(currentScenario.amount) + ' disbursed to ' + currentScenario.seller + ' · transaction closed', 'var(--emerald)');
   });
 
   document.getElementById('toEscrowBtn').addEventListener('click', ()=>{
-    logEvent('09:13', 'Escrow locked · R2,450.00 secured', 'var(--gold)');
+    logEvent('09:13', 'Escrow locked · ' + moneyCompact(currentScenario.amount) + ' secured', 'var(--gold)');
   });
   document.getElementById('toTrackingBtn').addEventListener('click', ()=>{
-    logEvent('09:19', 'Courier en route · 6 min to dropoff', 'var(--steel)');
+    logEvent('09:19', 'Courier en route · ' + currentScenario.etaDropoff + ' to dropoff', 'var(--steel)');
   });
   document.getElementById('toVerifyBtn').addEventListener('click', ()=>{
     logEvent('09:39', 'Arrived at dropoff · awaiting PIN', 'var(--steel)');
@@ -1115,7 +1248,7 @@
   }
   function resetLog(){
     activityLog.innerHTML = '';
-    logEvent('09:12', 'Waybill HX-4829 created · awaiting dispatch', 'var(--amber)');
+    logEvent('09:12', 'Waybill ' + currentScenario.ref + ' created · awaiting dispatch', 'var(--amber)');
   }
 
   function resetAll(){
@@ -1125,10 +1258,19 @@
     pinView.classList.remove('hidden');
     receiptView.classList.add('hidden');
     resetDispatch();
+    nextScenario();
     resetLog();
     render(0);
   }
   document.getElementById('resetBtn').addEventListener('click', resetAll);
+  document.getElementById('newOrderBtn').addEventListener('click', () => {
+    const btn = document.getElementById('newOrderBtn');
+    btn.classList.add('spin');
+    setTimeout(() => btn.classList.remove('spin'), 350);
+    resetAll();
+  });
+
+  applyScenario(SCENARIOS[0]);
   resetLog();
 
   updatePin();
