@@ -475,6 +475,30 @@
   .retry-note .dot{width:6px;height:6px;border-radius:50%; background:var(--amber); animation:statusPulse 1s infinite;}
   @media (prefers-reduced-motion:reduce){ .retry-note .dot{animation:none;} }
 
+  /* Live activity log — a genuine state-driven audit trail, not decoration */
+  .log-panel{display:flex; flex-direction:column; gap:0; max-height:220px; overflow-y:auto;}
+  .log-row{display:flex; align-items:flex-start; gap:10px; padding:10px 0; border-top:1px dashed var(--border-hair); animation:logIn .3s ease both;}
+  .log-row:first-child{border-top:none;}
+  @keyframes logIn{from{opacity:0; transform:translateY(-4px);} to{opacity:1; transform:translateY(0);}}
+  @media (prefers-reduced-motion:reduce){ .log-row{animation:none;} }
+  .log-dot{width:7px; height:7px; border-radius:50%; margin-top:5px; flex:none;}
+  .log-time{font-family:var(--font-mono); font-size:0.68rem; color:var(--ink-faint); flex:none; width:52px;}
+  .log-text{font-size:0.82rem; color:var(--ink-soft); font-weight:450; line-height:1.4;}
+
+  /* Courier trust badges */
+  .profile-badges{display:flex; flex-wrap:wrap; gap:6px; margin-top:2px;}
+  .badge{
+    display:inline-flex; align-items:center; gap:4px; font-size:0.63rem; font-weight:600;
+    padding:4px 8px; border-radius:999px; background:var(--glass); border:1px solid var(--border-hair); color:var(--ink-faint);
+  }
+  .badge svg{width:10px; height:10px; color:var(--emerald-ink); flex:none;}
+
+  /* Explicit, on-brand keyboard focus states */
+  a:focus-visible, button:focus-visible, .step-pill:focus-visible, .legend-item:focus-visible{
+    outline:2px solid var(--steel); outline-offset:2px; border-radius:8px;
+  }
+  .key:focus-visible{outline:2px solid var(--gold); outline-offset:1px;}
+
   .hidden{display:none !important;}
 </style>
 
@@ -525,6 +549,16 @@
       <div class="step-pill legend-item" data-step="3" style="--pill-color:var(--emerald); --pill-soft:var(--emerald-soft);">
         <span class="num">4</span><span>Verified</span>
       </div>
+    </div>
+
+    <!-- LIVE ACTIVITY LOG -->
+    <div class="db-section">
+      <div class="head">
+        <span class="eyebrow">Live Activity Log</span>
+        <h3>Audit trail for HX-4829</h3>
+        <p class="note-line">Every state change on the right is recorded here — this is the ledger a courier partner or auditor would actually see.</p>
+      </div>
+      <div class="panel log-panel" id="activityLog"></div>
     </div>
 
     <!-- FINANCIAL ARCHITECTURE -->
@@ -671,7 +705,7 @@
       <div class="app-header">
         <div class="row-top">
           <h1 class="title">Handover Terminal</h1>
-          <span class="step-tag" id="stepTag">Step 1 · Escrow</span>
+          <span class="step-tag" id="stepTag" aria-live="polite">Step 1 · Escrow</span>
         </div>
         <div class="progress-rail" id="progressRail">
           <div class="progress-seg" data-seg="0"><i></i></div>
@@ -723,6 +757,10 @@
                 <div class="courier-info">
                   <div class="name">Sipho N.</div>
                   <div class="meta">Motorcycle · 1.2 km to pickup</div>
+                  <div class="profile-badges">
+                    <span class="badge"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>ID verified</span>
+                    <span class="badge"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Smart-Weight equipped</span>
+                  </div>
                 </div>
                 <div class="rating"><div class="star">★ 4.9</div><div class="meta">312 handovers</div></div>
               </div>
@@ -749,7 +787,7 @@
               </div>
             </div>
             <div class="spacer"></div>
-            <button class="cta" data-next style="background:var(--gold);">Continue to escrow lock →</button>
+            <button class="cta" id="toEscrowBtn" data-next style="background:var(--gold);">Continue to escrow lock →</button>
           </div>
 
         </section>
@@ -782,7 +820,7 @@
           </div>
 
           <div class="spacer"></div>
-          <button class="cta" data-next>View live tracking →</button>
+          <button class="cta" id="toTrackingBtn" data-next>View live tracking →</button>
         </section>
 
         <!-- SCREEN 2 — TRACKING -->
@@ -802,8 +840,12 @@
             <div class="courier-info">
               <div class="name">Sipho N.</div>
               <div class="meta">The Courier Guy · CA 442-190</div>
+              <div class="profile-badges">
+                <span class="badge"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>ID verified</span>
+                <span class="badge"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>312 handovers</span>
+              </div>
             </div>
-            <div class="rating"><div class="star">★ 4.9</div><div class="meta">312 handovers</div></div>
+            <div class="rating"><div class="star">★ 4.9</div></div>
           </div>
 
           <div class="glass">
@@ -812,7 +854,7 @@
           </div>
 
           <div class="spacer"></div>
-          <button class="cta" data-next>Proceed to verification →</button>
+          <button class="cta" id="toVerifyBtn" data-next>Proceed to verification →</button>
         </section>
 
         <!-- SCREEN 3 — VERIFICATION -->
@@ -989,16 +1031,19 @@
   document.getElementById('simulateResponseBtn').addEventListener('click', () => {
     showDispatchView(acceptView);
     startCountdown();
+    logEvent('09:12', 'Broadcasting to The Courier Guy fleet and independent couriers', 'var(--amber)');
   });
 
   document.getElementById('acceptBtn').addEventListener('click', () => {
     stopCountdown();
     showDispatchView(acceptedView);
+    logEvent('09:13', 'Sipho N. accepted the job · ETA to pickup 4 min', 'var(--steel)');
   });
 
   document.getElementById('declineBtn').addEventListener('click', () => {
     stopCountdown();
     showDispatchView(declinedView);
+    logEvent('09:12', 'Offer declined · rebroadcasting to next available courier', 'var(--amber)');
     setTimeout(() => {
       showDispatchView(acceptView);
       startCountdown();
@@ -1037,13 +1082,41 @@
   confirmBtn.addEventListener('click', ()=>{
     if(pin.length !== 4) return;
     modalOverlay.classList.add('show');
+    logEvent('09:41', 'PIN 4829 submitted · escrow released', 'var(--emerald)');
   });
 
   document.getElementById('viewReceiptBtn').addEventListener('click', ()=>{
     modalOverlay.classList.remove('show');
     pinView.classList.add('hidden');
     receiptView.classList.remove('hidden');
+    logEvent('09:41', 'R2,450.00 disbursed to Thabo M. · transaction closed', 'var(--emerald)');
   });
+
+  document.getElementById('toEscrowBtn').addEventListener('click', ()=>{
+    logEvent('09:13', 'Escrow locked · R2,450.00 secured', 'var(--gold)');
+  });
+  document.getElementById('toTrackingBtn').addEventListener('click', ()=>{
+    logEvent('09:19', 'Courier en route · 6 min to dropoff', 'var(--steel)');
+  });
+  document.getElementById('toVerifyBtn').addEventListener('click', ()=>{
+    logEvent('09:39', 'Arrived at dropoff · awaiting PIN', 'var(--steel)');
+  });
+
+  // ---- Live activity log ----
+  const activityLog = document.getElementById('activityLog');
+  function logEvent(time, text, color){
+    const row = document.createElement('div');
+    row.className = 'log-row';
+    row.innerHTML = '<span class="log-dot" style="background:' + color + '"></span>'
+      + '<span class="log-time">' + time + '</span>'
+      + '<span class="log-text">' + text + '</span>';
+    activityLog.prepend(row);
+    while(activityLog.children.length > 8){ activityLog.removeChild(activityLog.lastChild); }
+  }
+  function resetLog(){
+    activityLog.innerHTML = '';
+    logEvent('09:12', 'Waybill HX-4829 created · awaiting dispatch', 'var(--amber)');
+  }
 
   function resetAll(){
     pin = [];
@@ -1052,9 +1125,11 @@
     pinView.classList.remove('hidden');
     receiptView.classList.add('hidden');
     resetDispatch();
+    resetLog();
     render(0);
   }
   document.getElementById('resetBtn').addEventListener('click', resetAll);
+  resetLog();
 
   updatePin();
   render(0);
