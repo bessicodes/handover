@@ -80,6 +80,14 @@
   .batch-tag{font-family:var(--font-mono); font-size:0.68rem; color:var(--ink-faint); letter-spacing:.03em;}
   @media (max-width:760px){.batch-tag{display:none;}}
   @keyframes statusPulse{0%,100%{opacity:1;} 50%{opacity:.45;}}
+  .page-nav{display:flex; gap:6px;}
+  .page-nav a{
+    font-size:0.74rem; font-weight:700; color:var(--ink-soft); text-decoration:none;
+    padding:6px 11px; border-radius:999px; border:1px solid var(--border-hair); background:var(--surface);
+    transition:border-color .15s ease, color .15s ease, background .15s ease;
+  }
+  .page-nav a:hover{border-color:var(--border-hair-strong); color:var(--ink);}
+  .page-nav a.active{background:var(--gold); color:#1c1506; border-color:transparent;}
 
   /* ============ STAGE ============ */
   .stage{
@@ -570,6 +578,11 @@
       <span class="brand-word">Handover</span>
     </div>
     <div class="masthead-right">
+      <nav class="page-nav">
+        <a href="index.html" class="active">Demo</a>
+        <a href="meeting.html">Deck</a>
+        <a href="briefing.html">Briefing</a>
+      </nav>
       <span class="audience-pill">Prepared for The Courier Guy</span>
       <span class="batch-tag">Waybill <span id="mastheadRef">HX-4829</span></span>
     </div>

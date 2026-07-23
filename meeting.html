@@ -37,6 +37,16 @@
   }
 
   .deck{position:relative; width:100vw; height:100vh; height:100dvh;}
+  .page-nav{position:fixed; top:16px; right:20px; z-index:40; display:flex; gap:6px;}
+  .page-nav a{
+    font-size:0.72rem; font-weight:700; color:var(--ink-soft); text-decoration:none;
+    padding:6px 11px; border-radius:999px; border:1px solid var(--border-hair-strong);
+    background:rgba(18,21,27,0.7); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    transition:border-color .15s ease, color .15s ease, background .15s ease;
+  }
+  .page-nav a:hover{color:var(--ink);}
+  .page-nav a.active{background:var(--gold); color:#1c1506; border-color:transparent;}
+  @media (max-width:520px){.page-nav{top:12px; right:12px;}}
   .slide{
     position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center;
     padding:8vh 10vw; opacity:0; pointer-events:none; transform:translateX(24px);
@@ -158,6 +168,12 @@
 </style>
 </head>
 <body>
+
+<nav class="page-nav">
+  <a href="index.html">Demo</a>
+  <a href="meeting.html" class="active">Deck</a>
+  <a href="briefing.html">Briefing</a>
+</nav>
 
 <div class="deck" id="deck">
 
