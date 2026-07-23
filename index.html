@@ -71,7 +71,14 @@
   .brand-mark{width:22px; height:22px; flex:none;}
   .brand-word{font-weight:800; font-size:1.02rem; letter-spacing:-0.02em;}
   .masthead-right{display:flex; align-items:center; gap:10px;}
+  .audience-pill{
+    font-size:0.72rem; font-weight:600; color:var(--gold-ink);
+    background:var(--gold-soft); border:1px solid var(--border-hair);
+    padding:6px 12px; border-radius:999px; letter-spacing:.01em; white-space:nowrap;
+  }
+  @media (max-width:640px){.audience-pill{display:none;}}
   .batch-tag{font-family:var(--font-mono); font-size:0.68rem; color:var(--ink-faint); letter-spacing:.03em;}
+  @media (max-width:760px){.batch-tag{display:none;}}
   @keyframes statusPulse{0%,100%{opacity:1;} 50%{opacity:.45;}}
 
   /* ============ STAGE ============ */
@@ -563,6 +570,7 @@
       <span class="brand-word">Handover</span>
     </div>
     <div class="masthead-right">
+      <span class="audience-pill">Prepared for The Courier Guy</span>
       <span class="batch-tag">Waybill <span id="mastheadRef">HX-4829</span></span>
     </div>
   </div>
@@ -575,8 +583,8 @@
 
     <div class="db-top">
       <h1 class="headline">Escrow, verified at the door.</h1>
-      <p class="subhead">Works with any courier or delivery business.</p>
-      <p class="tagline">Buying from a stranger means trusting a stranger. Handover holds the money until a PIN confirms the parcel arrived, and any courier network can carry the job — the demo uses The Courier Guy and pudo&reg; lockers as the live example.</p>
+      <p class="subhead">Built around The Courier Guy's network and pudo&reg; lockers.</p>
+      <p class="tagline">Buying from a stranger means trusting a stranger. Handover holds the money until a PIN confirms the parcel arrived — and every delivery in this demo moves through The Courier Guy's fleet or a pudo&reg; locker. Your network carries the parcel; we carry the trust.</p>
     </div>
 
     <div class="step-pills" id="legend">
@@ -650,7 +658,7 @@
           </div>
           <div class="safeguard">
             <dt>Locker drop-off</dt>
-            <dd>Recipients who can't meet the courier collect from a partner locker — the same PIN releases the door.</dd>
+            <dd>Recipients who can't meet the courier collect from a pudo&reg; locker — the same PIN releases the door.</dd>
           </div>
           <div class="safeguard">
             <dt>Cover</dt>
@@ -660,7 +668,7 @@
       </div>
     </div>
 
-    <div class="db-footer">HANDOVER · WORKS WITH ANY COURIER OR DELIVERY BUSINESS</div>
+    <div class="db-footer">HANDOVER · PREPARED FOR THE COURIER GUY · JULY 2026</div>
   </div>
 
   <!-- ============ RIGHT: PHONE ============ -->
