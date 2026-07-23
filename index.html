@@ -71,21 +71,8 @@
   .brand-mark{width:22px; height:22px; flex:none;}
   .brand-word{font-weight:800; font-size:1.02rem; letter-spacing:-0.02em;}
   .masthead-right{display:flex; align-items:center; gap:10px;}
-  .audience-pill{
-    font-size:0.72rem; font-weight:600; color:var(--gold-ink);
-    background:var(--gold-soft); border:1px solid var(--border-hair);
-    padding:6px 12px; border-radius:999px; letter-spacing:.01em;
-  }
   .batch-tag{font-family:var(--font-mono); font-size:0.68rem; color:var(--ink-faint); letter-spacing:.03em;}
-  @media (max-width:760px){.batch-tag{display:none;}}
-  .status-pill{
-    display:flex; align-items:center; gap:7px;
-    font-size:0.72rem; font-weight:600; color:var(--ink-faint);
-  }
-  .status-dot{width:6px; height:6px; border-radius:50%; background:var(--emerald); box-shadow:0 0 0 3px var(--emerald-soft); animation:statusPulse 2.4s infinite;}
   @keyframes statusPulse{0%,100%{opacity:1;} 50%{opacity:.45;}}
-  @media (prefers-reduced-motion:reduce){.status-dot{animation:none;}}
-  @media (max-width:640px){.audience-pill{display:none;}}
 
   /* ============ STAGE ============ */
   .stage{
@@ -116,7 +103,6 @@
   }
   .stamp::before{content:""; position:absolute; inset:-3px; border:1px solid currentColor; border-radius:6px; opacity:.45;}
   .stamp.escrow{ top:16px; right:16px; color:var(--gold-ink); }
-  .stamp.settled{ position:static; transform:rotate(-8deg); color:var(--emerald-ink); font-size:0.58rem; padding:6px 10px; margin-left:auto; }
 
   .perf{height:1px; margin:2px 0; background-image:radial-gradient(circle, var(--border-hair-strong) 1.2px, transparent 1.3px); background-size:8px 1px; background-repeat:repeat-x;}
 
@@ -129,12 +115,6 @@
       var(--ink) 14px 15px, transparent 15px 18px);
   }
 
-  .eyebrow-line{
-    display:flex; align-items:center; gap:8px;
-    font-family:var(--font-mono); font-size:0.66rem; letter-spacing:.1em; text-transform:uppercase;
-    color:var(--ink-faint);
-  }
-  .live-dot{width:6px;height:6px;border-radius:50%; background:var(--emerald); box-shadow:0 0 0 3px var(--emerald-soft);}
   .headline{font-weight:900; font-size:2.3rem; letter-spacing:-0.035em; line-height:1.05; margin:14px 0 10px;}
   .subhead{font-weight:600; font-size:1.02rem; color:var(--steel-ink); margin:0 0 16px; letter-spacing:-0.005em;}
   .tagline{font-size:0.95rem; line-height:1.65; color:var(--ink-soft); margin:0; max-width:48ch; font-weight:400;}
@@ -183,45 +163,13 @@
   .fin-total .k{font-size:0.82rem; color:var(--ink-soft); font-weight:700;}
   .fin-total .v{font-weight:800; font-size:1.4rem; font-variant-numeric:tabular-nums; letter-spacing:-0.02em;}
 
-  /* Proprietary systems */
-  .sys-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
-  @media (max-width:520px){.sys-grid{grid-template-columns:1fr;}}
-  .sys-card{
-    background:var(--surface); border:1px solid var(--border-hair); border-radius:16px; padding:16px;
-    display:flex; flex-direction:column; gap:10px; box-shadow:var(--shadow-card);
-  }
-  .sys-icon{width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; background:var(--gold-soft); color:var(--gold-ink); flex:none; border:1px solid var(--border-hair);}
-  .sys-card:nth-child(2) .sys-icon{background:var(--steel-soft); color:var(--steel-ink);}
-  .sys-card h4{margin:0; font-size:0.9rem; font-weight:700; letter-spacing:-0.01em;}
-  .sys-card p{margin:0; font-size:0.78rem; line-height:1.55; color:var(--ink-soft); font-weight:400;}
-  .sys-card:nth-child(3){grid-column:1 / -1; flex-direction:row; align-items:flex-start;}
-  .sys-card:nth-child(3) .sys-icon{background:var(--emerald-soft); color:var(--emerald-ink);}
-
-  /* Fulfillment / dispatch node diagram */
-  .node-flow{display:flex; align-items:flex-start; gap:0; margin-top:4px; overflow-x:auto; padding-bottom:2px;}
-  .node{display:flex; flex-direction:column; align-items:center; gap:8px; width:78px; flex:none;}
-  .node-icon{width:36px; height:36px; border-radius:11px; display:flex; align-items:center; justify-content:center; border:1px solid var(--border-hair);}
-  .node.gold .node-icon{background:var(--gold-soft); color:var(--gold-ink);}
-  .node.steel .node-icon{background:linear-gradient(150deg, rgba(255,255,255,.10), rgba(159,180,199,.10)); color:var(--steel-ink);}
-  .node.emerald .node-icon{background:var(--emerald-soft); color:var(--emerald-ink);}
-  .node-label{font-size:0.63rem; text-align:center; line-height:1.35; color:var(--ink-faint); font-weight:600;}
-  .node-line{flex:1; height:2px; margin-top:18px; min-width:16px; background:linear-gradient(90deg, var(--border-hair-strong), var(--border-hair)); position:relative;}
-  .node-line::after{content:"›"; position:absolute; right:-1px; top:50%; transform:translateY(-58%); color:var(--ink-faint); font-size:13px; font-weight:700;}
-
-  .phase-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px;}
-  @media (max-width:520px){.phase-grid{grid-template-columns:1fr;}}
-  .phase-card{border-radius:14px; padding:16px; border:1px solid var(--border-hair);}
-  .phase-card.dark{background:var(--surface-2);}
-  .phase-card .phase-label{font-family:var(--font-mono); font-size:0.63rem; text-transform:uppercase; letter-spacing:.09em; color:var(--steel-ink); font-weight:700;}
-  .phase-card .phase-title{font-weight:800; font-size:1.0rem; margin:8px 0 6px; letter-spacing:-0.015em;}
-  .phase-card .phase-body{font-size:0.78rem; line-height:1.58; color:var(--ink-soft); margin:0; font-weight:400;}
-
-  /* Stakeholder targets */
-  .stake-row{display:flex; align-items:center; gap:12px; padding:11px 2px; border-top:1px dashed var(--border-hair);}
-  .stake-row:first-child{border-top:none; padding-top:2px;}
-  .stake-icon{width:32px; height:32px; border-radius:50%; background:var(--surface-2); border:1px solid var(--border-hair); color:var(--steel-ink); display:flex; align-items:center; justify-content:center; flex:none;}
-  .stake-name{font-size:0.83rem; font-weight:700; margin:0; letter-spacing:-0.005em;}
-  .stake-role{font-size:0.74rem; color:var(--ink-faint); margin:2px 0 0; font-weight:450;}
+  /* Safeguards */
+  .safeguard-list{margin:0; display:flex; flex-direction:column;}
+  .safeguard{display:flex; gap:14px; padding:11px 0; border-top:1px dashed var(--border-hair);}
+  .safeguard:first-child{border-top:none; padding-top:2px;}
+  .safeguard:last-child{padding-bottom:2px;}
+  .safeguard dt{flex:none; width:104px; font-size:0.8rem; font-weight:700; color:var(--gold-ink);}
+  .safeguard dd{margin:0; font-size:0.81rem; line-height:1.55; color:var(--ink-soft); font-weight:400;}
 
   .db-footer{
     font-family:var(--font-mono); font-size:0.67rem; color:var(--ink-faint);
@@ -615,9 +563,7 @@
       <span class="brand-word">Handover</span>
     </div>
     <div class="masthead-right">
-      <span class="audience-pill">Multi-carrier logistics platform</span>
       <span class="batch-tag">Waybill <span id="mastheadRef">HX-4829</span></span>
-      <span class="status-pill"><i class="status-dot"></i>Systems nominal</span>
     </div>
   </div>
 </header>
@@ -628,10 +574,9 @@
   <div class="dashboard">
 
     <div class="db-top">
-      <div class="eyebrow-line"><span class="live-dot"></span>Institutional Platform Review · Multi-Carrier Ready</div>
       <h1 class="headline">Escrow, verified at the door.</h1>
-      <p class="subhead">Built to plug into any courier or delivery business.</p>
-      <p class="tagline">Handover removes the single point of failure in stranger-to-stranger commerce: the exchange itself. Funds sit in escrow until a PIN confirms delivery. Every parcel moves through whichever courier network is assigned to the job — The Courier Guy and the nationwide pudo&reg; locker grid today, any other national or regional carrier tomorrow — no fleet, no float risk, no meeting a stranger in a parking lot.</p>
+      <p class="subhead">Works with any courier or delivery business.</p>
+      <p class="tagline">Buying from a stranger means trusting a stranger. Handover holds the money until a PIN confirms the parcel arrived, and any courier network can carry the job — the demo uses The Courier Guy and pudo&reg; lockers as the live example.</p>
     </div>
 
     <div class="step-pills" id="legend">
@@ -659,8 +604,8 @@
             New order
           </button>
         </div>
-        <h3>Audit trail for <span id="logHeadingRef">HX-4829</span></h3>
-        <p class="note-line">Every state change on the right is recorded here — this is the ledger a courier partner or auditor would actually see.</p>
+        <h3>Activity for <span id="logHeadingRef">HX-4829</span></h3>
+        <p class="note-line">Everything you do in the phone is recorded here as it happens.</p>
       </div>
       <div class="panel log-panel" id="activityLog"></div>
     </div>
@@ -668,9 +613,9 @@
     <!-- FINANCIAL ARCHITECTURE -->
     <div class="db-section">
       <div class="head">
-        <span class="eyebrow">Financial Architecture</span>
+        <span class="eyebrow">The Money</span>
         <h3>Where the <span id="finHeadingAmount">R 2,450.00</span> goes</h3>
-        <p class="note-line">Revenue architecture: 3.5% escrow fee (buyer-paid), a distance-indexed logistics markup, and an optional insurance upsell.</p>
+        <p class="note-line">Handover's fee is 3.5%, paid by the buyer. The courier fare is set by the carrier.</p>
       </div>
       <div class="panel">
         <div class="fin-bar">
@@ -686,109 +631,36 @@
         <div class="perf" style="margin-top:12px;"></div>
         <div class="fin-total" style="border-top:none; padding-top:12px;">
           <span class="k">Transaction total</span>
-          <span style="display:flex; align-items:center; gap:12px;">
-            <span class="stamp settled">Settled</span>
-            <span class="v" id="finTotalVal">R2,450.00</span>
-          </span>
+          <span class="v" id="finTotalVal">R2,450.00</span>
         </div>
-        <div class="barcode" style="margin-top:14px;"></div>
       </div>
     </div>
 
     <!-- PROPRIETARY SYSTEMS -->
     <div class="db-section">
       <div class="head">
-        <span class="eyebrow">Proprietary Systems</span>
-        <h3>Built-in fraud &amp; access controls</h3>
-      </div>
-      <div class="sys-grid">
-        <div class="sys-card">
-          <div class="sys-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3v18M6 7h12M6 7l-3 6a3 3 0 0 0 6 0l-3-6Zm12 0l-3 6a3 3 0 0 0 6 0l-3-6Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          <h4>Smart-Weight Anti-Fraud Scale</h4>
-          <p>The courier's device weighs the package at pickup and again at drop-off. Any mismatch flags the transaction and freezes escrow before funds move.</p>
-        </div>
-        <div class="sys-card">
-          <div class="sys-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="4" y="3" width="16" height="18" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M9 3v18M14.5 12h2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></div>
-          <h4>SafeHub Lockers</h4>
-          <p>Camera-verified, unattended drop points for recipients who can't meet the courier — the same PIN-release logic applies to the locker door.</p>
-        </div>
-        <div class="sys-card">
-          <div class="sys-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v5c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6l7-3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></div>
-          <div>
-            <h4>Tiered Transaction Insurance</h4>
-            <p>Every handover carries flat R500 cover at no extra cost. Buyers moving higher-value goods can opt into a high-value tier that raises the limit and routes the job to top-rated couriers only.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- FULFILLMENT INFRASTRUCTURE -->
-    <div class="db-section">
-      <div class="head">
-        <span class="eyebrow">Fulfillment Infrastructure</span>
-        <h3>Built to plug into any carrier's API</h3>
+        <span class="eyebrow">Safeguards</span>
+        <h3>What keeps the loop honest</h3>
       </div>
       <div class="panel">
-        <div class="node-flow">
-          <div class="node gold">
-            <div class="node-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 11V8a6 6 0 0 1 12 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><rect x="4" y="11" width="16" height="10" rx="3" fill="currentColor"/></svg></div>
-            <span class="node-label">Handover<br>Escrow</span>
+        <dl class="safeguard-list">
+          <div class="safeguard">
+            <dt>Weight check</dt>
+            <dd>The courier weighs the parcel at pickup and again at drop-off. A mismatch freezes escrow before funds move.</dd>
           </div>
-          <div class="node-line"></div>
-          <div class="node steel">
-            <div class="node-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="5" cy="17" r="2.3" stroke="currentColor" stroke-width="1.7"/><circle cx="17" cy="17" r="2.3" stroke="currentColor" stroke-width="1.7"/><path d="M7 17h5l3-6h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M9 11h4l2 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></div>
-            <span class="node-label">Any Carrier<br>API</span>
+          <div class="safeguard">
+            <dt>Locker drop-off</dt>
+            <dd>Recipients who can't meet the courier collect from a partner locker — the same PIN releases the door.</dd>
           </div>
-          <div class="node-line"></div>
-          <div class="node steel">
-            <div class="node-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="4" y="3" width="16" height="18" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M9 3v18M14.5 12h2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></div>
-            <span class="node-label">Locker /<br>Depot Network</span>
+          <div class="safeguard">
+            <dt>Cover</dt>
+            <dd>R500 flat cover on every handover; higher-value tiers route the job to top-rated couriers only.</dd>
           </div>
-          <div class="node-line"></div>
-          <div class="node emerald">
-            <div class="node-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <span class="node-label">Parcel<br>Delivered</span>
-          </div>
-        </div>
-        <p class="note" style="font-size:0.84rem; line-height:1.65; color:var(--ink-soft); margin:16px 0 0; font-weight:400;"><strong style="color:var(--ink); font-weight:700;">Launch phase: zero asset overhead.</strong> The Handover escrow layer is carrier-agnostic — it integrates with any courier or delivery business's open API to instantly trigger a pickup or route parcels into that partner's own locker or depot network. The Courier Guy and pudo&reg; are the live example throughout this demo; the same integration pattern works for any national or regional carrier.</p>
-        <div class="phase-grid">
-          <div class="phase-card dark">
-            <span class="phase-label">Launch phase</span>
-            <p class="phase-title">Zero fleet overhead</p>
-            <p class="phase-body">No vehicles, no employed drivers, no depreciating assets on the balance sheet — dispatch is a single API call the instant escrow locks.</p>
-          </div>
-          <div class="phase-card">
-            <span class="phase-label">Scaling phase</span>
-            <p class="phase-title">Handover driver network</p>
-            <p class="phase-body">As metro density grows, we layer in our own courier pool with escrow-job-specific payouts, pulling top-rated drivers off the general platforms.</p>
-          </div>
-        </div>
+        </dl>
       </div>
     </div>
 
-    <!-- STAKEHOLDER TARGETS -->
-    <div class="db-section">
-      <div class="head">
-        <span class="eyebrow">Stakeholder Targets</span>
-        <h3>Who we're courting first</h3>
-      </div>
-      <div class="panel" style="padding:6px 18px;">
-        <div class="stake-row">
-          <div class="stake-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="5" cy="17" r="2.3" stroke="currentColor" stroke-width="1.7"/><circle cx="17" cy="17" r="2.3" stroke="currentColor" stroke-width="1.7"/><path d="M7 17h5l3-6h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></div>
-          <div><p class="stake-name">Delivery &amp; courier partners</p><p class="stake-role">API integration across any carrier — The Courier Guy &amp; pudo&reg; live today</p></div>
-        </div>
-        <div class="stake-row">
-          <div class="stake-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="4" y="10" width="16" height="9" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.8"/></svg></div>
-          <div><p class="stake-name">Partnerships leads, Stripe &amp; PayPal</p><p class="stake-role">Escrow &amp; financial-compliance rails</p></div>
-        </div>
-        <div class="stake-row">
-          <div class="stake-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 21V9M12 9C12 4 8 3 4 3c0 5 3 6 8 6ZM12 9c0-4 4-5 8-5 0 4-2.5 5-8 5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
-          <div><p class="stake-name">Pre-seed venture investors</p><p class="stake-role">Marketplace-trust &amp; logistics-infra thesis</p></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="db-footer">HANDOVER TECHNOLOGIES · PLATFORM-AGNOSTIC LOGISTICS INFRASTRUCTURE · CONFIDENTIAL</div>
+    <div class="db-footer">HANDOVER · WORKS WITH ANY COURIER OR DELIVERY BUSINESS</div>
   </div>
 
   <!-- ============ RIGHT: PHONE ============ -->
